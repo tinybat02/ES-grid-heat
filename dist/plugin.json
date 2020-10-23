@@ -1,0 +1,21 @@
+{
+  "type": "panel",
+  "name": "ES Grid Heat",
+  "id": "id-grid-polygon-heat",
+  "dataFormats": ["table"],
+  "info": {
+    "description": "ES Grid Heat",
+    "author": {
+      "name": "Nam Le"
+    },
+    "keywords": [],
+    "screenshots": [],
+    "version": "1.0.0",
+    "updated": "2020-10-23"
+  },
+
+  "dependencies": {
+    "grafanaVersion": "6.3.x",
+    "plugins": []
+  }
+}
