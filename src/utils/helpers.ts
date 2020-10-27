@@ -49,11 +49,9 @@ export const createHeatLayer = (series: Frame[], geojson: GeoJSON) => {
   const polygons: Feature[] = [];
 
   geojson.features.map(feature => {
-    if (feature.properties && feature.properties.name && stores.includes(feature.properties.name)) {
-      const percentage = assignValueToStore[feature.properties.name];
-      polygons.push(
-        createPolygon(feature, assignValueToStore[feature.properties.name].toFixed(2), percentageToHsl(percentage))
-      );
+    if (feature.properties && feature.properties.id && stores.includes(feature.properties.id)) {
+      const percentage = assignValueToStore[feature.properties.id];
+      polygons.push(createPolygon(feature, percentage.toFixed(2), percentageToHsl(percentage)));
     }
   });
 

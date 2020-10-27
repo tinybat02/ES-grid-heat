@@ -55361,9 +55361,9 @@ var createHeatLayer = function createHeatLayer(series, geojson) {
   });
   var polygons = [];
   geojson.features.map(function (feature) {
-    if (feature.properties && feature.properties.name && stores.includes(feature.properties.name)) {
-      var percentage = assignValueToStore[feature.properties.name];
-      polygons.push(createPolygon(feature, assignValueToStore[feature.properties.name].toFixed(2), percentageToHsl(percentage)));
+    if (feature.properties && feature.properties.id && stores.includes(feature.properties.id)) {
+      var percentage = assignValueToStore[feature.properties.id];
+      polygons.push(createPolygon(feature, percentage.toFixed(2), percentageToHsl(percentage)));
     }
   });
   return new ol_layer__WEBPACK_IMPORTED_MODULE_0__["Vector"]({
