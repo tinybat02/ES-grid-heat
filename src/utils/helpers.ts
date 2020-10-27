@@ -35,13 +35,13 @@ const createPolygon = (feature: FeatureGeojson, value: string, color: string) =>
 };
 
 export const createHeatLayer = (series: Frame[], geojson: GeoJSON) => {
-  const stores: string[] = [];
+  // const stores: string[] = [];
   const assignValueToStore: { [key: string]: number } = {};
 
   series.map(item => {
     const sumValue = item.fields[0].values.buffer.slice(-1)[0] || 0;
     if (item.name) {
-      stores.push(item.name);
+      // stores.push(item.name);
       assignValueToStore[item.name] = sumValue;
     }
   });
@@ -49,8 +49,8 @@ export const createHeatLayer = (series: Frame[], geojson: GeoJSON) => {
   const polygons: Feature[] = [];
 
   geojson.features.map(feature => {
-    if (feature.properties && feature.properties.id && stores.includes(feature.properties.id)) {
-      const percentage = assignValueToStore[feature.properties.id];
+    if (feature.properties && feature.properties.id /* && stores.includes(feature.properties.id) */) {
+      const percentage = assignValueToStore[feature.properties.id] || 0;
       polygons.push(createPolygon(feature, percentage.toFixed(2), percentageToHsl(percentage)));
     }
   });

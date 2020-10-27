@@ -55349,22 +55349,24 @@ var createPolygon = function createPolygon(feature, value, color) {
 };
 
 var createHeatLayer = function createHeatLayer(series, geojson) {
-  var stores = [];
+  // const stores: string[] = [];
   var assignValueToStore = {};
   series.map(function (item) {
     var sumValue = item.fields[0].values.buffer.slice(-1)[0] || 0;
 
     if (item.name) {
-      stores.push(item.name);
+      // stores.push(item.name);
       assignValueToStore[item.name] = sumValue;
     }
   });
   var polygons = [];
   geojson.features.map(function (feature) {
-    if (feature.properties && feature.properties.id && stores.includes(feature.properties.id)) {
-      var percentage = assignValueToStore[feature.properties.id];
-      polygons.push(createPolygon(feature, percentage.toFixed(2), percentageToHsl(percentage)));
-    }
+    if (feature.properties && feature.properties.id
+    /* && stores.includes(feature.properties.id) */
+    ) {
+        var percentage = assignValueToStore[feature.properties.id] || 0;
+        polygons.push(createPolygon(feature, percentage.toFixed(2), percentageToHsl(percentage)));
+      }
   });
   return new ol_layer__WEBPACK_IMPORTED_MODULE_0__["Vector"]({
     source: new ol_source_Vector__WEBPACK_IMPORTED_MODULE_1__["default"]({
