@@ -55308,11 +55308,13 @@ var defaults = {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createHeatLayer", function() { return createHeatLayer; });
-/* harmony import */ var ol_layer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ol/layer */ "../node_modules/ol/layer.js");
-/* harmony import */ var ol_source_Vector__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ol/source/Vector */ "../node_modules/ol/source/Vector.js");
-/* harmony import */ var ol_Feature__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ol/Feature */ "../node_modules/ol/Feature.js");
-/* harmony import */ var ol_geom_Polygon__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ol/geom/Polygon */ "../node_modules/ol/geom/Polygon.js");
-/* harmony import */ var ol_style__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ol/style */ "../node_modules/ol/style.js");
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "../node_modules/tslib/tslib.es6.js");
+/* harmony import */ var ol_layer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ol/layer */ "../node_modules/ol/layer.js");
+/* harmony import */ var ol_source_Vector__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ol/source/Vector */ "../node_modules/ol/source/Vector.js");
+/* harmony import */ var ol_Feature__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ol/Feature */ "../node_modules/ol/Feature.js");
+/* harmony import */ var ol_geom_Polygon__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ol/geom/Polygon */ "../node_modules/ol/geom/Polygon.js");
+/* harmony import */ var ol_style__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ol/style */ "../node_modules/ol/style.js");
+
 
 
 
@@ -55334,14 +55336,14 @@ var createPolygon = function createPolygon(feature, value, color) {
     coordinates = [feature.geometry.coordinates];
   }
 
-  var polygonFeature = new ol_Feature__WEBPACK_IMPORTED_MODULE_2__["default"]({
+  var polygonFeature = new ol_Feature__WEBPACK_IMPORTED_MODULE_3__["default"]({
     type: 'Polygon',
-    geometry: new ol_geom_Polygon__WEBPACK_IMPORTED_MODULE_3__["default"](coordinates).transform('EPSG:4326', 'EPSG:3857')
+    geometry: new ol_geom_Polygon__WEBPACK_IMPORTED_MODULE_4__["default"](coordinates).transform('EPSG:4326', 'EPSG:3857')
   });
   polygonFeature.set('value', value);
   polygonFeature.set('color', color);
-  polygonFeature.setStyle(new ol_style__WEBPACK_IMPORTED_MODULE_4__["Style"]({
-    fill: new ol_style__WEBPACK_IMPORTED_MODULE_4__["Fill"]({
+  polygonFeature.setStyle(new ol_style__WEBPACK_IMPORTED_MODULE_5__["Style"]({
+    fill: new ol_style__WEBPACK_IMPORTED_MODULE_5__["Fill"]({
       color: color
     })
   }));
@@ -55349,27 +55351,38 @@ var createPolygon = function createPolygon(feature, value, color) {
 };
 
 var createHeatLayer = function createHeatLayer(series, geojson) {
-  // const stores: string[] = [];
   var assignValueToStore = {};
+  var assignValueToStoreLog = {};
   series.map(function (item) {
     var sumValue = item.fields[0].values.buffer.slice(-1)[0] || 0;
 
     if (item.name) {
-      // stores.push(item.name);
-      assignValueToStore[item.name] = sumValue;
+      assignValueToStore[item.name] = sumValue; // assignValueToStoreLog[item.name] = sumValue < 1 ? 0 : Math.log(sumValue);
+
+      assignValueToStoreLog[item.name] = Math.log(sumValue + 1);
     }
   });
+  var heatValues = Object.values(assignValueToStoreLog);
+  var max = Math.max.apply(Math, Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__spread"])(heatValues));
+  var min = Math.min.apply(Math, Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__spread"])(heatValues));
+  var range = max - min;
   var polygons = [];
   geojson.features.map(function (feature) {
     if (feature.properties && feature.properties.id
     /* && stores.includes(feature.properties.id) */
     ) {
-        var percentage = assignValueToStore[feature.properties.id] || 0;
-        polygons.push(createPolygon(feature, percentage.toFixed(2), percentageToHsl(percentage)));
+        var valueLabel = assignValueToStore[feature.properties.id] || 0;
+        var percentage = 0;
+
+        if (assignValueToStoreLog[feature.properties.id] && range != 0) {
+          percentage = (assignValueToStoreLog[feature.properties.id] - min) / range;
+        }
+
+        polygons.push(createPolygon(feature, valueLabel.toFixed(3), percentageToHsl(percentage)));
       }
   });
-  return new ol_layer__WEBPACK_IMPORTED_MODULE_0__["Vector"]({
-    source: new ol_source_Vector__WEBPACK_IMPORTED_MODULE_1__["default"]({
+  return new ol_layer__WEBPACK_IMPORTED_MODULE_1__["Vector"]({
+    source: new ol_source_Vector__WEBPACK_IMPORTED_MODULE_2__["default"]({
       features: polygons
     }),
     zIndex: 2
