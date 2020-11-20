@@ -35,8 +35,8 @@ export interface PanelOptions {
 }
 
 export const defaults: PanelOptions = {
-  center_lat: 48.262725,
-  center_lon: 11.66725,
+  center_lat: 48.1239,
+  center_lon: 11.60857,
   tile_url: '',
   zoom_level: 18,
   geojson: null,
