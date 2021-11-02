@@ -54,11 +54,11 @@ export const createHeatLayer = (series: Frame[], geojson: GeoJSON) => {
   const polygons: Feature[] = [];
 
   geojson.features.map(feature => {
-    if (feature.properties && feature.properties.id /* && stores.includes(feature.properties.id) */) {
-      if (assignValueToStore[feature.properties.id]) {
-        const percentage = range != 0 ? (assignValueToStoreLog[feature.properties.id] - min) / range : 0;
+    if (feature.properties && feature.properties.name /* && stores.includes(feature.properties.id) */) {
+      if (assignValueToStore[feature.properties.name]) {
+        const percentage = range != 0 ? (assignValueToStoreLog[feature.properties.name] - min) / range : 0;
         polygons.push(
-          createPolygon(feature, assignValueToStore[feature.properties.id].toFixed(3), percentageToHsl(percentage))
+          createPolygon(feature, assignValueToStore[feature.properties.name].toFixed(3), percentageToHsl(percentage))
         );
       } else {
         polygons.push(createPolygon(feature, '', 'rgba(125, 126, 126, 0.2)'));
